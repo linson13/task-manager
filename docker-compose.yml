@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: task-management-api
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=Task Management API
+      - DEBUG=True
+      - DATABASE_URL=sqlite:///./tasks.db
+    volumes:
+      - ./data:/app/data
+      - ./tasks.db:/app/tasks.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # Optional: Add PostgreSQL for production
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: task-db
+  #   environment:
+  #     POSTGRES_USER: taskuser
+  #     POSTGRES_PASSWORD: taskpass
+  #     POSTGRES_DB: taskdb
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+# volumes:
+#   postgres_data:
